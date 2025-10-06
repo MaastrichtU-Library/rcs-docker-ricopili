@@ -1,5 +1,8 @@
-**RICOPILI** stands for Rapid Imputation and COmputational PIpeLIne for GWAS - It is developed and maintained by Stephan Ripke at the Broad Institute and MGH, this is a docker version of this [ricopili](https://sites.google.com/a/broadinstitute.org/ricopili/). 
+Forked and adapted from: https://github.com/bruggerk/ricopili_docker
+Ricopili tool repository: https://github.com/Ripkelab/ricopili
 
+
+**RICOPILI** stands for Rapid Imputation and COmputational PIpeLIne for GWAS - It is developed and maintained by Stephan Ripke at the Broad Institute and MGH, this is a docker version of this [ricopili](https://sites.google.com/a/broadinstitute.org/ricopili/). 
 
 
 How to use this image
