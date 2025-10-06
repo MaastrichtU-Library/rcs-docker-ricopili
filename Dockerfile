@@ -1,34 +1,35 @@
-FROM ubuntu:18.04
+FROM ubuntu:24.04
 
-MAINTAINER Kim Brugger <kim.brugger@uib.no>
 LABEL authors="Kim Brugger" \
-    description="Docker image containing an installation of the ricopili tools version: 2019_Jun_25.001"
+      description="Docker image containing an installation of the ricopili tools version: 2025_Jan_30.003" \
+      org.opencontainers.image.source="https://github.com/MaastrichtU-Library/rcs-docker-ricopili"
 
 # for the tzdata package
 RUN ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl  ca-certificates \
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates \
              r-base make tk-dev gcc gfortran texlive texlive-fonts-extra \
-	     libreadline-dev xorg-dev libxml2-dev libcurl4-gnutls-dev  libgfortran3 \
+	     libreadline-dev xorg-dev libxml2-dev libcurl4-gnutls-dev  libgfortran5 \
 	     && apt-get clean
 
 RUN useradd -d /ricopili -U -m -s /bin/bash ricopili
 
 RUN mkdir -p  /ricopili/bin \
               /ricopili/dependencies \
-              /ricopili/log/ \
+              /ricopili/dependencies/R_packages \
+              /ricopili/log \
 	      /ricopili/reference \
-	      /scratch /refs/ /cluster /work /tsd /projects /net
+	      /scratch /refs /cluster /work /tsd /projects /net
 
-RUN curl -Lo /tmp/rp_bin.tgz https://sites.google.com/a/broadinstitute.org/ricopili/download/rp_bin.2019_Jun_25.001.tar.gz && \
+RUN curl -Lo /tmp/rp_bin.tgz "https://drive.google.com/uc?export=download&id=1UpqMTWadtDpVQwiAGplB4kBq-8XESwBl" && \
       tar zxvf /tmp/rp_bin.tgz --strip 1 -C /ricopili/bin/ && \
       chmod 755 -R /ricopili/bin/ && \
       rm /tmp/rp_bin.tgz
 
-RUN curl -Lo /tmp/rp_dep.tgz https://storage.googleapis.com/cloud-ricopili/dependencies/Ricopili_Dependencies.1118b.tar.gz && \
+RUN curl -Lo /tmp/rp_dep.tgz "https://personal.broadinstitute.org/braun/sharing/ricopili_dependencies_0225b.tar.gz" && \
     tar zxvf /tmp/rp_dep.tgz -C /ricopili/dependencies/ && \
-    chmod 755 /ricopili/dependencies/ && \
+    chmod 755 -R /ricopili/dependencies/ && \
     rm /tmp/rp_dep.tgz 
 
 RUN Rscript -e 'install.packages("rmeta", repos="https://cloud.r-project.org", lib="/ricopili/dependencies/R_packages")' #&& \
@@ -38,7 +39,7 @@ RUN Rscript -e 'install.packages("rmeta", repos="https://cloud.r-project.org", l
 
 RUN curl -o /tmp/Miniconda2-latest-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda2-latest-Linux-x86_64.sh && \
     sh /tmp/Miniconda2-latest-Linux-x86_64.sh -b -f -p /usr/local/ && \
-    rm /tmp/Miniconda2-latest-Linux-x86_64.sh &&\
+    rm /tmp/Miniconda2-latest-Linux-x86_64.sh && \
     cd /ricopili/dependencies/ldsc/ && \
     conda env create --file environment.yml
 
@@ -89,9 +90,6 @@ ARG CACHEBUST=1
 RUN rm -f /ricopili/ricopili.conf && \
     curl -o  /ricopili/ricopili.conf https://raw.githubusercontent.com/bruggerk/ricopili_docker/master/ricopili.conf
 
-
-ENV PATH /ricopili/bin:/ricopili/bin/pdfjam:$PATH
-ENV rp_perlpackages /ricopili/dependencies/perl_modules/
-ENV RPHOME /ricopili/
-
-
+ENV PATH=/ricopili/bin:/ricopili/bin/pdfjam:$PATH
+ENV rp_perlpackages=/ricopili/dependencies/perl_modules/
+ENV RPHOME=/ricopili/
