@@ -1,8 +1,7 @@
 FROM ubuntu:24.04
 
-LABEL authors="Kim Brugger" \
-      description="Docker image containing an installation of the ricopili tools version: 2025_Jan_30.003" \
-      org.opencontainers.image.source="https://github.com/MaastrichtU-Library/rcs-docker-ricopili"
+LABEL description="Docker image containing an installation of the ricopili tools version: 2025_Jan_30.003"
+LABEL org.opencontainers.image.source=https://github.com/MaastrichtU-Library/rcs-docker-ricopili
 
 # for the tzdata package
 RUN ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime
