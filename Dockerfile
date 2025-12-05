@@ -3,7 +3,7 @@ FROM ubuntu:24.04
 LABEL description="Docker image containing an installation of the ricopili tools version: 2025_Jan_30.003"
 LABEL org.opencontainers.image.source=https://github.com/MaastrichtU-Library/rcs-docker-ricopili
 
-# for the tzdata package
+# For the tzdata package
 RUN ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 
 
@@ -31,10 +31,7 @@ RUN curl -Lo /tmp/rp_dep.tgz "https://personal.broadinstitute.org/braun/sharing/
     chmod 755 -R /ricopili/dependencies/ && \
     rm /tmp/rp_dep.tgz 
 
-RUN Rscript -e 'install.packages("rmeta", repos="https://cloud.r-project.org", lib="/ricopili/dependencies/R_packages")' #&& \
-    #Rscript -e 'install.packages("rms",   repos="https://cloud.r-project.org" lib="/ricopili/dependencies/R_packages")' && \
-    #Rscript -e 'install.packages("pROC",  repos="https://cloud.r-project.org")' && \
-    #Rscript -e 'install.packages("MASS",  repos="https://cloud.r-project.org")'
+RUN Rscript -e 'install.packages("rmeta", repos="https://cloud.r-project.org", lib="/ricopili/dependencies/R_packages")' #&& 
 
 RUN curl -o /tmp/Miniconda2-latest-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda2-latest-Linux-x86_64.sh && \
     sh /tmp/Miniconda2-latest-Linux-x86_64.sh -b -f -p /usr/local/ && \
@@ -42,48 +39,22 @@ RUN curl -o /tmp/Miniconda2-latest-Linux-x86_64.sh https://repo.anaconda.com/min
     cd /ricopili/dependencies/ldsc/ && \
     conda env create --file environment.yml
 
-
-#RUN cd /ricopili/reference && curl -LO https://storage.googleapis.com/cloud-ricopili/dependencies/HRC.r1-1.EGA.GRCh37.metafiles.deploy.tar.gz.cksum
-#RUN cd /ricopili/reference \
-#    && curl -LO https://storage.googleapis.com/cloud-ricopili/dependencies/HRC.r1-1.EGA.GRCh37.metafiles.deploy.tar.gz \
-#    && tar zxf HRC.r1-1.EGA.GRCh37.metafiles.deploy.tar.gz \
-#    && rm HRC.r1-1.EGA.GRCh37.metafiles.deploy.tar.gz
-    
-
-#RUN cd /ricopili/reference && curl -LO https://storage.googleapis.com/cloud-ricopili/dependencies/HRC.r1-1.EGA.GRCh37.1KG_pops.tar.gz.cksum
-#RUN cd /ricopili/reference \
-#    && curl -LO https://storage.googleapis.com/cloud-ricopili/dependencies/HRC.r1-1.EGA.GRCh37.1KG_pops.tar.gz \
-#    && tar zxf HRC.r1-1.EGA.GRCh37.1KG_pops.tar.gz \ 
-#    && rm HRC.r1-1.EGA.GRCh37.1KG_pops.tar.gz
-
-#RUN cd /ricopili/reference && curl -LO https://storage.googleapis.com/cloud-ricopili/dependencies/human_g1k_v37.fasta.gz.cksum
-#RUN cd /ricopili/reference \
-#    && curl -LO https://storage.googleapis.com/cloud-ricopili/dependencies/human_g1k_v37.fasta.gz \
-#    && gunzip -q human_g1k_v37.fasta.gz || touch /tmp/gzip.warning
-
-#RUN pip install --upgrade pip --no-cache-dir && \
-#    pip install  --no-cache-dir --no-deps bitarray==0.8 pandas==0.20 scipy #pybedtools==0.7 pysam==0.15 
-
-#log-files
+# Populate log files
 RUN touch /ricopili/log/preimp_dir_info \
           /ricopili/log/impute_dir_info \
-	  /ricopili/log/pcaer_info \
-	  /ricopili/log/idtager_info \
-	  /ricopili/log/repqc2_info \
-	  /ricopili/log/areator_info \
-	  /ricopili/log/merge_caller_info \
-	  /ricopili/log/postimp_navi_info \
-	  /ricopili/log/reference_dir_info \
-	  /ricopili/log/test_info \
-	  /ricopili/log/clumper_info
-
-#RUN curl -o /ricopili/rp_config.custom.serial.txt https:/personal.broadinstitute.org/sripke/share_links/rp_config_collections/rp_config.custom.serial.txt
+	  	  /ricopili/log/pcaer_info \
+	      /ricopili/log/idtager_info \
+	      /ricopili/log/repqc2_info \
+	      /ricopili/log/areator_info \
+	      /ricopili/log/merge_caller_info \
+	      /ricopili/log/postimp_navi_info \
+	      /ricopili/log/reference_dir_info \
+	      /ricopili/log/test_info \
+	      /ricopili/log/clumper_info
 
 # We cannot send emails from docker, so make a fake 
 RUN touch /bin/mail && chmod 755 /bin/mail
 
-
-#RUN curl -o  /ricopili/ricopili.conf https://raw.githubusercontent.com/bruggerk/ricopili_docker/master/ricopili.conf
 # To build wo/ caching from now on: docker build -t your-image --build-arg CACHEBUST=$(date +%s)
 ARG CACHEBUST=1
 RUN rm -f /ricopili/ricopili.conf && \
